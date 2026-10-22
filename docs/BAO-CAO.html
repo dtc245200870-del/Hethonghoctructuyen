@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Báo cáo triển khai hệ thống học trực tuyến</title>
+  <style>
+    :root { --navy:#16345c; --blue:#346da8; --cyan:#eaf3fb; --ink:#242c38; --muted:#617080; --line:#d8e0e8; --green:#39785b; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:#e8edf2; color:var(--ink); font:11pt/1.55 "Times New Roman",serif; }
+    .page { position:relative; width:210mm; min-height:297mm; margin:12mm auto; padding:20mm 21mm 21mm; background:#fff; box-shadow:0 2mm 8mm #15283b1c; page-break-after:always; }
+    .page:last-child { page-break-after:auto; }
+    .running { display:flex; justify-content:space-between; padding-bottom:5mm; border-bottom:1px solid var(--line); color:#778495; font:9pt Arial,sans-serif; }
+    .footer { position:absolute; right:21mm; bottom:11mm; left:21mm; display:flex; justify-content:space-between; padding-top:3mm; border-top:1px solid var(--line); color:#778495; font:9pt Arial,sans-serif; }
+    h1,h2,h3 { color:var(--navy); }
+    h1 { margin:9mm 0 4mm; font-size:25pt; line-height:1.25; text-align:center; }
+    h2 { margin:8mm 0 4mm; padding-bottom:2mm; border-bottom:2px solid #dbe8f4; font-size:17pt; }
+    h3 { margin:5mm 0 2mm; font-size:12pt; }
+    p { margin:2mm 0 3mm; text-align:justify; }
+    ul,ol { margin:2mm 0 4mm; padding-left:7mm; }
+    li { margin:1.4mm 0; }
+    .cover { display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding:28mm 24mm 20mm; border:2px solid var(--navy); }
+    .cover .institution { margin-top:10mm; color:var(--navy); font-size:14pt; font-weight:bold; text-align:center; text-transform:uppercase; }
+    .cover .faculty { margin-top:3mm; color:#53677c; font-size:12pt; text-align:center; }
+    .cover .rule { width:90mm; margin:15mm 0 12mm; border:0; border-top:2px solid var(--blue); }
+    .cover .report-label { margin:0; color:var(--blue); font-size:17pt; font-weight:bold; letter-spacing:2px; }
+    .cover .title { max-width:145mm; margin:7mm 0 18mm; font-size:25pt; text-align:center; text-transform:uppercase; }
+    .cover .field { width:133mm; margin:3mm 0; font-size:13pt; }
+    .cover .field span { display:inline-block; min-width:48mm; font-weight:bold; }
+    .cover .year { margin-top:auto; padding-top:18mm; color:var(--navy); font-size:13pt; }
+    .callout { margin:4mm 0; padding:3mm 4mm; border-left:3px solid var(--blue); background:var(--cyan); }
+    .note { color:#657486; font-size:9.5pt; font-style:italic; }
+    .table { width:100%; margin:4mm 0; border-collapse:collapse; font-size:10pt; }
+    .table th,.table td { padding:2mm 2.5mm; border:1px solid var(--line); vertical-align:top; text-align:left; }
+    .table th { background:#eef4fa; color:var(--navy); }
+    .figure { margin:5mm 0; padding:4mm; border:1px solid var(--line); border-radius:2mm; background:#fbfdff; }
+    .figure figcaption { margin-top:2mm; color:#657486; font-size:9pt; text-align:center; }
+    .diagram { width:100%; height:auto; }
+    .box { fill:#fff; stroke:#4c77a1; stroke-width:2; rx:10; }
+    .box-core { fill:#e9f2fb; }.box-observe { fill:#edf7f1; stroke:#5c9a76; }
+    .arrow { stroke:#647f98; stroke-width:2; fill:none; marker-end:url(#arrow); }
+    .diagram text { fill:#20364b; font:14px Arial,sans-serif; text-anchor:middle; }
+    .diagram .small { fill:#586b7d; font-size:11px; }
+    pre { margin:3mm 0; padding:3mm; overflow-wrap:anywhere; white-space:pre-wrap; border:1px solid #e2e7ed; border-radius:2mm; background:#f5f7f9; color:#24374a; font:9pt/1.45 Consolas,monospace; }
+    .evidence { display:grid; min-height:37mm; place-items:center; margin:4mm 0; border:1px dashed #91a7bc; background:repeating-linear-gradient(135deg,#fbfdff,#fbfdff 8px,#f3f7fa 8px,#f3f7fa 16px); color:#667c90; text-align:center; }
+    .check { color:var(--green); font-weight:bold; }
+    .small-text { font-size:10pt; }
+    .toc li { padding:1mm 0; border-bottom:1px dotted #bdc9d5; }
+    @media print { body { background:#fff; } .page { width:210mm; height:297mm; min-height:297mm; margin:0; box-shadow:none; break-after:page; } .page:last-child { break-after:auto; } }
+  </style>
+</head>
+<body>
+  <section class="page cover">
+    <div class="institution">[TÊN TRƯỜNG ĐẠI HỌC / CAO ĐẲNG]</div>
+    <div class="faculty">[KHOA / BỘ MÔN]</div>
+    <hr class="rule">
+    <p class="report-label">BÁO CÁO ĐỒ ÁN</p>
+    <h1 class="title">Triển khai và quản trị hệ thống học trực tuyến</h1>
+    <div class="field"><span>Sinh viên:</span> [HỌ VÀ TÊN]</div>
+    <div class="field"><span>Mã số sinh viên:</span> [MÃ SỐ SINH VIÊN]</div>
+    <div class="field"><span>Lớp:</span> [LỚP / KHÓA]</div>
+    <div class="field"><span>Giảng viên hướng dẫn:</span> [HỌ TÊN GIẢNG VIÊN]</div>
+    <div class="year">[ĐỊA ĐIỂM] — 2026</div>
+  </section>
+
+  <section class="page">
+    <div class="running"><span>BÁO CÁO ĐỒ ÁN</span><span>Hệ thống học trực tuyến</span></div>
+    <h2>Tóm tắt và mục lục</h2>
+    <p>Báo cáo trình bày quá trình xây dựng một nền tảng học trực tuyến tiếng Việt và triển khai các thành phần vận hành bằng Docker Compose. Người học có thể duyệt khóa học, đăng ký, xem bài học và lưu tiến độ. MySQL lưu dữ liệu; Nginx tiếp nhận lưu lượng web; Prometheus/Grafana theo dõi số liệu; Loki/Promtail tập trung log.</p>
+    <p>Mục tiêu của đồ án là thực hành tích hợp ứng dụng, cơ sở dữ liệu, reverse proxy, monitoring, logging và một số biện pháp hardening trong một môi trường có thể tái tạo. Tài liệu này là mẫu bàn giao: thông tin sinh viên, ảnh chụp demo và kết quả chạy cần được cập nhật bởi người thực hiện.</p>
+    <h3>Mục lục</h3>
+    <ol class="toc">
+      <li>Tổng quan và yêu cầu</li><li>Kiến trúc hệ thống</li><li>Ứng dụng và chức năng học tập</li>
+      <li>Cơ sở dữ liệu và luồng dữ liệu</li><li>Docker Compose và Nginx</li><li>Giám sát Prometheus/Grafana</li>
+      <li>Log tập trung Loki/Promtail</li><li>Hardening và giới hạn bảo mật</li><li>Kiểm thử, demo và minh chứng</li>
+      <li>Đánh giá, kết luận và hướng phát triển</li>
+    </ol>
+    <div class="callout"><strong>Thông tin cần điền:</strong> thay toàn bộ nội dung trong ngoặc vuông, đặt mã sinh viên vào `.env`, chèn ảnh chụp giao diện/dashboard/phpMyAdmin và chỉ ghi kết quả kiểm thử đã quan sát trực tiếp.</div>
+    <h3>Danh mục công nghệ</h3>
+    <table class="table"><tr><th>Nhóm</th><th>Công nghệ</th><th>Vai trò</th></tr>
+      <tr><td>Ứng dụng</td><td>Node.js, Express, HTML/CSS/JavaScript</td><td>Giao diện học viên, REST API, metrics và log ứng dụng</td></tr>
+      <tr><td>Dữ liệu</td><td>MySQL, phpMyAdmin</td><td>Lưu khóa học, bài học, đăng ký, tiến độ; quản trị DB</td></tr>
+      <tr><td>Vận hành</td><td>Docker Compose, Nginx</td><td>Điều phối container, reverse proxy và security headers</td></tr>
+      <tr><td>Observability</td><td>Prometheus, Grafana, Loki, Promtail</td><td>Thu thập metrics, dashboard và truy vấn log</td></tr>
+    </table>
+    <div class="footer"><span>[HỌ VÀ TÊN] · [MSSV]</span><span>Trang 2</span></div>
+  </section>
+
+  <section class="page">
+    <div class="running"><span>01 · TỔNG QUAN</span><span>Hệ thống học trực tuyến</span></div>
+    <h2>1. Tổng quan và yêu cầu</h2>
+    <h3>1.1 Bài toán</h3>
+    <p>Người học cần một không gian đơn giản để tìm nội dung phù hợp, đăng ký học và theo dõi bài đã hoàn thành. Ở góc độ vận hành, hệ thống cần chạy đồng bộ trên máy khác, quản lý dữ liệu có giao diện, truy cập website qua reverse proxy và có thể quan sát tình trạng hoạt động.</p>
+    <h3>1.2 Phạm vi triển khai</h3>
+    <ul>
+      <li>Xây dựng dashboard responsive bằng tiếng Việt với danh mục, tìm kiếm, danh sách khóa học và tiến độ.</li>
+      <li>Cung cấp đăng ký/đăng nhập học viên và API hồ sơ, danh sách/chi tiết khóa học, đăng ký và đánh dấu hoàn thành bài học.</li>
+      <li>Lưu dữ liệu trong MySQL; phpMyAdmin giúp xem và truy vấn dữ liệu khi demo.</li>
+      <li>Dùng Nginx làm điểm truy cập website, thêm HTTP security headers và ẩn endpoint metrics khỏi Internet.</li>
+      <li>Thu thập metrics ứng dụng, Nginx, MySQL; tập trung log ứng dụng và Nginx để tra cứu bằng LogQL.</li>
+      <li>Áp dụng network isolation, user không đặc quyền cho app/proxy, filesystem read-only và quản lý secret qua `.env`.</li>
+    </ul>
+    <h3>1.3 Ngoài phạm vi</h3>
+    <p>Bản demo có tài khoản học viên, nhưng chưa có xác minh email, khôi phục mật khẩu, phân quyền giảng viên, thanh toán, tải video, thi trực tuyến hay chứng chỉ TLS. Vì vậy, đây không phải hệ thống sẵn sàng cho dữ liệu nhạy cảm hoặc triển khai Internet khi chưa được đánh giá bảo mật.</p>
+    <h3>1.4 Tiêu chí nghiệm thu</h3>
+    <table class="table"><tr><th>Tiêu chí</th><th>Cách kiểm chứng</th></tr>
+      <tr><td>Web và DB hoạt động</td><td>Truy cập website; đăng ký khóa học; kiểm tra bảng enrollment/lesson_progress ở phpMyAdmin</td></tr>
+      <tr><td>Reverse proxy</td><td>Mở website qua cổng Nginx; kiểm tra response headers và health endpoint</td></tr>
+      <tr><td>Metrics</td><td>Prometheus targets ở trạng thái UP; Grafana có request, Nginx, DB panels</td></tr>
+      <tr><td>Logging</td><td>Log ứng dụng và proxy xuất hiện trong Loki; chạy tối thiểu ba LogQL query</td></tr>
+      <tr><td>Hardening</td><td>Kiểm tra compose: user, capabilities, read-only filesystem, network và port bindings</td></tr>
+    </table>
+    <div class="footer"><span>[HỌ VÀ TÊN] · [MSSV]</span><span>Trang 3</span></div>
+  </section>
+
+  <section class="page">
+    <div class="running"><span>02 · KIẾN TRÚC</span><span>Hệ thống học trực tuyến</span></div>
+    <h2>2. Kiến trúc hệ thống</h2>
+    <p>Stack gồm các container độc lập, được khai báo trong `docker-compose.yml`. Chỉ Nginx nhận traffic website từ host. Nginx chuyển tiếp request tới ứng dụng; ứng dụng đọc/ghi MySQL trên mạng dữ liệu riêng. Prometheus scrape các exporter và endpoint nội bộ của app; Grafana dùng hai datasource Prometheus và Loki.</p>
+    <figure class="figure">
+      <svg class="diagram" viewBox="0 0 760 420" role="img" aria-label="Sơ đồ kiến trúc hệ thống học trực tuyến">
+        <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#647f98"/></marker></defs>
+        <rect class="box box-core" x="18" y="150" width="125" height="65"/><text x="80" y="177">Trình duyệt</text><text class="small" x="80" y="197">:8080 / web</text>
+        <rect class="box box-core" x="190" y="150" width="140" height="65"/><text x="260" y="177">Nginx proxy</text><text class="small" x="260" y="197">:8080 · headers</text>
+        <rect class="box box-core" x="386" y="150" width="145" height="65"/><text x="458" y="177">Express app</text><text class="small" x="458" y="197">API · metrics · logs</text>
+        <rect class="box" x="590" y="65" width="145" height="65"/><text x="662" y="92">MySQL</text><text class="small" x="662" y="112">+ phpMyAdmin :8082</text>
+        <rect class="box box-observe" x="190" y="300" width="145" height="65"/><text x="262" y="327">Prometheus</text><text class="small" x="262" y="347">app · Nginx · DB</text>
+        <rect class="box box-observe" x="390" y="300" width="145" height="65"/><text x="462" y="327">Grafana</text><text class="small" x="462" y="347">dashboard</text>
+        <rect class="box box-observe" x="590" y="250" width="145" height="65"/><text x="662" y="277">Promtail → Loki</text><text class="small" x="662" y="297">app + Nginx logs</text>
+        <path class="arrow" d="M143 182 H190"/><path class="arrow" d="M330 182 H386"/><path class="arrow" d="M531 165 L590 110"/>
+        <path class="arrow" d="M262 300 V215"/><path class="arrow" d="M335 332 H390"/><path class="arrow" d="M535 332 L590 290"/>
+        <path class="arrow" d="M458 215 L625 250"/><text class="small" x="375" y="255">metrics / logs</text>
+      </svg>
+      <figcaption>Hình 1. Sơ đồ các thành phần và luồng trao đổi chính (sơ đồ khái niệm).</figcaption>
+    </figure>
+    <h3>2.1 Phân vùng mạng</h3>
+    <p>`edge-net` nối host với Nginx. `app-net` kết nối proxy, ứng dụng và các exporter cần scrape. `data-net` nối ứng dụng với MySQL/phpMyAdmin/exporter. `observability-net` dành cho Prometheus, Grafana, Loki và Promtail. Các network ứng dụng, dữ liệu và quan sát được khai báo internal; MySQL không mở port ra host.</p>
+    <h3>2.2 Nguyên tắc luồng</h3>
+    <ol><li>Người học → Nginx → API/tài nguyên tĩnh của ứng dụng.</li><li>Ứng dụng → MySQL bằng kết nối nội bộ và truy vấn tham số hóa.</li><li>Prometheus → endpoint metrics/exporter; Grafana → Prometheus và Loki.</li><li>Promtail đọc file log chỉ đọc trên named volume → Loki.</li></ol>
+    <div class="footer"><span>[HỌ VÀ TÊN] · [MSSV]</span><span>Trang 4</span></div>
+  </section>
+
+  <section class="page">
+    <div class="running"><span>03 · ỨNG DỤNG</span><span>Hệ thống học trực tuyến</span></div>
+    <h2>3. Ứng dụng và chức năng học tập</h2>
+    <h3>3.1 Giao diện học viên</h3>
+    <p>Trang chủ thể hiện hồ sơ người học, thống kê khóa học, danh mục và lưới khóa học. Bộ lọc hỗ trợ tất cả, khóa đang học và ba nhóm lập trình/thiết kế/dữ liệu; ô tìm kiếm khớp tiêu đề, danh mục và tên giảng viên. Bố cục co giãn theo màn hình desktop, tablet và mobile.</p>
+    <p>Mỗi thẻ khóa học hiển thị cấp độ, giảng viên, thời lượng, tổng bài, tiến độ và hành động phù hợp. Bốn khóa mẫu có 16 bài hướng dẫn bằng tiếng Việt. Từ danh sách nội dung, học viên chọn “Vào học”; nút “Hoàn thành bài học” nằm trong màn hình đọc và chỉ bật sau khi đọc đến cuối. Hoàn thành xong, ứng dụng tự quay về danh sách bài trong khóa học để tiếp tục bài khác; API cũng kiểm tra trạng thái đọc trên máy chủ.</p>
+    <h3>3.2 API chính</h3>
+    <table class="table"><tr><th>Method / endpoint</th><th>Chức năng</th><th>Kết quả</th></tr>
+      <tr><td>POST `/api/auth/register`, `/api/auth/login`</td><td>Tạo tài khoản hoặc đăng nhập</td><td>Cookie session HttpOnly; mật khẩu được băm bcrypt</td></tr>
+      <tr><td>POST `/api/auth/logout`, GET `/api/auth/me`</td><td>Đăng xuất và kiểm tra phiên hiện tại</td><td>Hủy phiên hoặc trả trạng thái đăng nhập</td></tr>
+      <tr><td>GET `/api/profile`</td><td>Đọc hồ sơ và thống kê của học viên hiện tại</td><td>ID, email, mã học viên và số liệu học tập</td></tr>
+      <tr><td>GET `/api/courses`</td><td>Danh sách khóa học và tiến độ</td><td>Thông tin khóa, bài học, trạng thái đăng ký</td></tr>
+      <tr><td>GET `/api/courses/:courseId`</td><td>Chi tiết và nội dung khóa học</td><td>Thông tin khóa và danh sách bài học</td></tr>
+      <tr><td>POST `/api/courses/:courseId/enroll`</td><td>Đăng ký khóa học (yêu cầu đăng nhập)</td><td>Ghi enrollment riêng cho học viên; thao tác lặp không tạo bản ghi trùng</td></tr>
+      <tr><td>GET `/api/lessons/:lessonId`</td><td>Đọc nội dung bài học đã ghi danh</td><td>Nội dung và trạng thái đọc/hoàn thành</td></tr>
+      <tr><td>POST `/api/lessons/:lessonId/read`</td><td>Xác nhận đã đọc hết nội dung (yêu cầu đăng nhập và ghi danh)</td><td>Ghi dấu thời điểm đã đọc</td></tr>
+      <tr><td>POST `/api/lessons/:lessonId/complete`</td><td>Hoàn thành bài học (yêu cầu đã đọc)</td><td>Ghi tiến độ; trả lỗi nếu chưa mở và đọc bài</td></tr>
+    </table>
+    <h3>3.3 Kiểm soát request và lỗi</h3>
+    <p>API JSON giới hạn body 16 KB và áp dụng rate limit. Tham số đường dẫn được truyền vào MySQL dưới dạng bind parameter thay vì ghép chuỗi SQL. Endpoint health kiểm tra DB và trả trạng thái 503 khi không kết nối được. Lỗi phía máy chủ được ghi log có cấu trúc, còn thông báo trả về client không tiết lộ chi tiết nội bộ.</p>
+    <div class="callout"><strong>Lưu ý mô hình danh tính:</strong> mỗi học viên dùng email duy nhất và có session riêng; ID phiên ngẫu nhiên chỉ lưu dạng hash trong MySQL. Cookie có cờ HttpOnly/SameSite và hết hạn sau 7 ngày. Mã học viên là tùy chọn.</div>
+    <div class="evidence">CHÈN ẢNH 1: Dashboard website sau khi chạy<br>Chụp tại http://localhost:8088; che thông tin không dành cho công khai.</div>
+    <div class="footer"><span>[HỌ VÀ TÊN] · [MSSV]</span><span>Trang 5</span></div>
+  </section>
+
+  <section class="page">
+    <div class="running"><span>04 · CƠ SỞ DỮ LIỆU</span><span>Hệ thống học trực tuyến</span></div>
+    <h2>4. Cơ sở dữ liệu và luồng dữ liệu</h2>
+    <h3>4.1 Mô hình dữ liệu</h3>
+    <table class="table"><tr><th>Bảng</th><th>Khóa / quan hệ</th><th>Ý nghĩa</th></tr>
+      <tr><td>students</td><td>PK `id`; unique email/mã học viên</td><td>Hồ sơ, mật khẩu bcrypt và mã học viên</td></tr>
+      <tr><td>auth_sessions</td><td>PK `session_hash`; FK `student_id`</td><td>Hash session và thời hạn đăng nhập</td></tr>
+      <tr><td>courses</td><td>PK `id`</td><td>Khóa học, danh mục, cấp độ, giảng viên</td></tr>
+      <tr><td>lessons</td><td>PK `id`, FK `course_id` → courses</td><td>Bài học có thứ tự trong khóa</td></tr>
+      <tr><td>lesson_reads</td><td>PK ghép `(student_id, lesson_id)`</td><td>Bài học học viên đã đọc đến cuối</td></tr>
+      <tr><td>enrollments</td><td>PK ghép `(student_id, course_id)`</td><td>Quan hệ người học đăng ký khóa</td></tr>
+      <tr><td>lesson_progress</td><td>PK ghép `(student_id, lesson_id)`</td><td>Trạng thái đã hoàn thành bài học</td></tr>
+    </table>
+    <p>Khóa ngoại đảm bảo tính toàn vẹn và có `ON DELETE CASCADE` cho các quan hệ phụ thuộc. Ràng buộc unique `(course_id, position)` bảo đảm thứ tự bài học không trùng trong một khóa. Chỉ mục trên `lessons(course_id, position)` và `lesson_progress(student_id)` hỗ trợ đọc danh sách bài và thống kê tiến độ.</p>
+    <h3>4.2 Khởi tạo và dữ liệu mẫu</h3>
+    <p>`database/init.sql` được mount vào thư mục init của image MySQL. Image chỉ chạy script này khi data directory còn rỗng; vì vậy, thay seed SQL không thay đổi volume đã tồn tại. Khi cần khởi tạo lại trong môi trường demo, phải chủ động xóa volume (mất dữ liệu) hoặc viết migration mới.</p>
+    <h3>4.3 Kiểm tra bằng phpMyAdmin</h3>
+    <ol><li>Mở phpMyAdmin ở `http://localhost:8082`.</li><li>Chọn MySQL; server `db`; user `elearning`; database `elearning`; mật khẩu đọc từ `.env`.</li><li>Xem các bảng `courses`, `lessons`, `enrollments`, `lesson_reads`, `lesson_progress`.</li><li>Đăng ký một khóa trên website, mở bài học và đọc hết nội dung.</li><li>Kiểm tra bản ghi trong `lesson_reads`, hoàn thành bài rồi xác nhận dữ liệu trong `lesson_progress`.</li></ol>
+    <pre>SELECT s.id, c.title, e.enrolled_at
+FROM enrollments e
+JOIN students s ON s.id = e.student_id
+JOIN courses c ON c.id = e.course_id;
+
+SELECT s.id, l.title, p.completed_at
+FROM lesson_progress p
+JOIN students s ON s.id = p.student_id
+JOIN lessons l ON l.id = p.lesson_id
+ORDER BY p.completed_at DESC;</pre>
+    <div class="evidence">CHÈN ẢNH 2: phpMyAdmin hiển thị enrollment và lesson_progress<br>Không đưa password hoặc dữ liệu cá nhân vào ảnh.</div>
+    <div class="footer"><span>[HỌ VÀ TÊN] · [MSSV]</span><span>Trang 6</span></div>
+  </section>
+
+  <section class="page">
+    <div class="running"><span>05 · TRIỂN KHAI</span><span>Hệ thống học trực tuyến</span></div>
+    <h2>5. Docker Compose và Nginx</h2>
+    <h3>5.1 Triển khai container</h3>
+    <p>Docker Compose định nghĩa ứng dụng, MySQL, phpMyAdmin, Nginx, Prometheus, Grafana, MySQL exporter, Nginx exporter, Loki và Promtail. Dịch vụ DB có health check `mysqladmin ping`; app đợi DB healthy trước khi khởi động. Nginx đợi app healthy. Named volume giữ dữ liệu DB, dashboard, metrics và log qua lần restart.</p>
+    <pre>Copy-Item .env.example .env
+# Sửa mật khẩu và mã sinh viên trong .env
+docker compose config
+docker compose up --build -d
+docker compose ps</pre>
+    <p>Image ứng dụng được build nhiều giai đoạn: cài dependency production ở stage riêng, chỉ chép mã cần thiết sang runtime. `.dockerignore` loại `node_modules`, `.env` và metadata Git khỏi build context. Dockerfile chạy Node bằng user `node` thay vì root.</p>
+    <h3>5.2 Reverse proxy và headers</h3>
+    <p>Nginx listen cổng container 8080 (host cổng 8088), forward tới `app:3000`, truyền Host và thông tin proxy. Các header cấu hình gồm `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, và Content Security Policy. Header server version bị ẩn. Kích thước body và timeout kết nối được giới hạn.</p>
+    <p>Endpoint `/nginx_status` chỉ phục vụ exporter trong mạng Docker và không được proxy ra public website. `/metrics` của app cũng bị Nginx chặn; Prometheus truy cập app trực tiếp trong mạng nội bộ.</p>
+    <h3>5.3 Các endpoint demo</h3>
+    <table class="table"><tr><th>URL cục bộ</th><th>Thành phần</th><th>Ràng buộc</th></tr>
+      <tr><td>`localhost:8088`</td><td>Nginx / website</td><td>Entry point web</td></tr>
+      <tr><td>`127.0.0.1:8082`</td><td>phpMyAdmin</td><td>Loopback host</td></tr>
+      <tr><td>`127.0.0.1:9090`</td><td>Prometheus</td><td>Loopback host</td></tr>
+      <tr><td>`127.0.0.1:3000`</td><td>Grafana</td><td>Loopback host; user admin</td></tr>
+    </table>
+    <div class="callout">Cấu hình Nginx hiện là HTTP cho demo. Trước khi public hệ thống, cần bổ sung HTTPS/certificate, bật `COOKIE_SECURE`, quản lý secret và backup; security headers không thay thế TLS.</div>
+    <div class="footer"><span>[HỌ VÀ TÊN] · [MSSV]</span><span>Trang 7</span></div>
+  </section>
+
+  <section class="page">
+    <div class="running"><span>06 · METRICS</span><span>Hệ thống học trực tuyến</span></div>
+    <h2>6. Giám sát Prometheus và Grafana</h2>
+    <h3>6.1 Thu thập metrics</h3>
+    <p>Prometheus scrape mỗi 15 giây từ ba job: ứng dụng tại `/metrics`, Nginx exporter tại cổng 9113 và MySQL exporter tại cổng 9104. Ứng dụng xuất các metric HTTP request counter, histogram thời gian phản hồi và metric runtime Node.js. Request route dùng route pattern Express để tránh label chứa ID tùy ý.</p>
+    <pre>sum(rate(http_requests_total[5m])) by (method, route)
+
+rate(http_request_duration_seconds_sum[5m])
+/
+rate(http_request_duration_seconds_count[5m])
+
+nginx_connections_active
+mysql_global_status_threads_connected</pre>
+    <h3>6.2 Dashboard</h3>
+    <p>Grafana tự provision datasource Prometheus/Loki và dashboard `E-learning system`. Các panel gồm lưu lượng HTTP theo method/route, độ trễ trung bình, kết nối Nginx, số kết nối MySQL và log ứng dụng/proxy. Dashboard provision dưới dạng JSON trong source để tái tạo được khi triển khai.</p>
+    <h3>6.3 Quy trình xác minh</h3>
+    <ol><li>Mở `http://localhost:9090/targets`, xác nhận app, Nginx và MySQL exporter báo UP.</li><li>Truy cập website, mở một khóa học và phát sinh một số request API.</li><li>Mở Grafana, vào dashboard E-learning system và chọn khoảng thời gian gần đây.</li><li>Quan sát metrics sau ít nhất một chu kỳ scrape; kiểm tra Prometheus Explore nếu panel chưa có dữ liệu.</li></ol>
+    <p>Prometheus lưu tối đa 15 ngày trong volume cục bộ. Đây là cấu hình demo, không bao gồm alert manager, backup TSDB hay HA.</p>
+    <div class="evidence">CHÈN ẢNH 3: Grafana dashboard và Prometheus targets<br>Ảnh nên thể hiện tên các panel/targets; không hiển thị password.</div>
+    <div class="footer"><span>[HỌ VÀ TÊN] · [MSSV]</span><span>Trang 8</span></div>
+  </section>
+
+  <section class="page">
+    <div class="running"><span>07 · LOGGING</span><span>Hệ thống học trực tuyến</span></div>
+    <h2>7. Log tập trung Loki và Promtail</h2>
+    <h3>7.1 Luồng log</h3>
+    <p>Ứng dụng ghi log JSON ra stdout và file `application.log` trên volume riêng; Nginx ghi access/error log vào volume riêng với quyền chỉ dành cho user Nginx. Promtail mount hai volume ở chế độ read-only, theo dõi file và gửi stream theo nhãn `job` đến Loki. Không mount Docker socket nên collector không có quyền điều khiển Docker daemon.</p>
+    <h3>7.2 LogQL demo</h3>
+    <p>Chạy ít nhất ba truy vấn sau trong Grafana → Explore → datasource Loki:</p>
+    <pre># 1. Toàn bộ log của ứng dụng
+{job="elearning-app"}
+
+# 2. Các request GET qua Nginx
+{job="nginx"} |= "GET"
+
+# 3. Log lỗi ứng dụng; parse JSON để lọc level
+{job="elearning-app"} | json | level="error"</pre>
+    <p>Có thể tạo thêm truy vấn lỗi 5xx của Nginx: `{job="nginx"} |= " 5"`; kiểm tra định dạng access log mặc định trước khi dùng bộ lọc status trong demo.</p>
+    <h3>7.3 Chính sách và giới hạn</h3>
+    <p>Log ứng dụng ghi thời điểm, level, tên sự kiện, HTTP method, path, status và duration; không ghi body request, token hay mật khẩu. Loki dùng cấu hình local và volume bền vững, phù hợp lab một máy. Chưa có retention/backup được hiệu chỉnh theo production; cần đánh giá dung lượng và chính sách lưu log trước khi triển khai lâu dài.</p>
+    <div class="evidence">CHÈN ẢNH 4: Explore với ba LogQL query và kết quả log<br>Chụp các query đã chạy thành công, có dữ liệu mới phát sinh.</div>
+    <div class="footer"><span>[HỌ VÀ TÊN] · [MSSV]</span><span>Trang 9</span></div>
+  </section>
+
+  <section class="page">
+    <div class="running"><span>08 · HARDENING</span><span>Hệ thống học trực tuyến</span></div>
+    <h2>8. Hardening và giới hạn bảo mật</h2>
+    <table class="table"><tr><th>Biện pháp</th><th>Áp dụng ở đâu</th><th>Mục đích</th></tr>
+      <tr><td>Non-root</td><td>Node chạy user `node`; Nginx dùng image unprivileged</td><td>Giảm quyền nếu tiến trình ứng dụng bị xâm nhập</td></tr>
+      <tr><td>Filesystem read-only</td><td>App và proxy; cache/runtime cần thiết dùng tmpfs</td><td>Hạn chế ghi vào filesystem container</td></tr>
+      <tr><td>Drop capabilities</td><td>App và proxy: `cap_drop: ALL`</td><td>Loại bỏ Linux capability không cần thiết</td></tr>
+      <tr><td>Network isolation</td><td>edge/app/data/observability networks</td><td>Chỉ nối dịch vụ tới network phục vụ chức năng</td></tr>
+      <tr><td>Giới hạn port</td><td>DB không publish; phpMyAdmin/Grafana/Prometheus bind localhost</td><td>Giảm bề mặt truy cập từ mạng bên ngoài</td></tr>
+      <tr><td>HTTP controls</td><td>Nginx headers/timeouts; Helmet; API/auth rate limit; kiểm tra Origin</td><td>Giảm rủi ro trình duyệt và request quá mức</td></tr>
+      <tr><td>Mật khẩu/session</td><td>bcrypt; session ngẫu nhiên lưu dạng hash; cookie HttpOnly/SameSite</td><td>Không lưu mật khẩu hoặc bearer session dạng rõ trong DB</td></tr>
+      <tr><td>SQL/secret</td><td>Parameterized queries; `.env` bị ignore bởi Git</td><td>Hạn chế injection và rò rỉ secret vô ý</td></tr>
+    </table>
+    <h3>8.1 Mật khẩu và quyền quản trị</h3>
+    <p>Người triển khai phải thay các placeholder trong `.env.example` bằng bốn mật khẩu mạnh, khác nhau cho MySQL root, tài khoản ứng dụng, MySQL exporter và Grafana. phpMyAdmin không có lớp xác thực proxy riêng và chỉ được publish lên loopback, vì thế không mở cổng này ra Internet. Không dùng dữ liệu thật hoặc thông tin xác thực dùng lại từ hệ thống khác.</p>
+    <h3>8.2 Giới hạn cần nói rõ khi bảo vệ</h3>
+    <ul>
+      <li>HTTP demo chưa mã hóa lưu lượng; security headers không thay thế HTTPS.</li>
+      <li>Chưa có xác minh email, khôi phục mật khẩu hoặc phân quyền vai trò; cần TLS trước khi sử dụng qua Internet.</li>
+      <li>Image MySQL chính thức cần entrypoint khởi tạo dữ liệu và quyền sở hữu volume; không ép `user:` ở Compose vì có thể phá quá trình init.</li>
+      <li>Exporter/Prometheus/Grafana chạy trong mạng lab; chưa có TLS nội bộ, auth riêng cho mọi datasource hay HA.</li>
+    </ul>
+    <p>Hardening là giảm thiểu rủi ro theo phạm vi đồ án, không phải chứng nhận hệ thống an toàn tuyệt đối.</p>
+    <div class="footer"><span>[HỌ VÀ TÊN] · [MSSV]</span><span>Trang 10</span></div>
+  </section>
+
+  <section class="page">
+    <div class="running"><span>09 · KIỂM THỬ VÀ DEMO</span><span>Hệ thống học trực tuyến</span></div>
+    <h2>9. Kiểm thử, demo và minh chứng</h2>
+    <p>Thực hiện các bước theo trình tự, ghi phiên bản Docker/Compose và kết quả quan sát. Bảng dưới là checklist cần tự điền sau khi chạy; không đánh dấu đạt nếu chưa quan sát trực tiếp.</p>
+    <table class="table"><tr><th>#</th><th>Thao tác</th><th>Kết quả cần thấy</th><th>Kết quả thực tế</th></tr>
+      <tr><td>1</td><td>`docker compose config`</td><td>Compose hợp lệ, secret đã đặt</td><td>[Điền]</td></tr>
+      <tr><td>2</td><td>`docker compose ps`</td><td>app/db/proxy healthy, dịch vụ khác running</td><td>[Điền]</td></tr>
+      <tr><td>3</td><td>Mở website</td><td>Trang dashboard và khóa học mẫu hiển thị</td><td>[Điền]</td></tr>
+      <tr><td>4</td><td>Đăng ký, đăng nhập, đăng xuất</td><td>Hồ sơ hiện đúng; đăng xuất thu hồi phiên</td><td>[Điền]</td></tr>
+      <tr><td>5</td><td>Mở bài và đọc đến cuối</td><td>Nút hoàn thành trong màn hình đọc chỉ bật sau xác nhận đã đọc</td><td>[Điền]</td></tr>
+      <tr><td>6</td><td>Hoàn thành bài học</td><td>Tiến độ cập nhật và tự quay về danh sách bài học</td><td>[Điền]</td></tr>
+      <tr><td>7</td><td>Kiểm tra phpMyAdmin</td><td>Enrollment/read/progress lưu trong MySQL</td><td>[Điền]</td></tr>
+      <tr><td>8</td><td>Prometheus targets</td><td>app/nginx/MySQL exporter UP</td><td>[Điền]</td></tr>
+      <tr><td>9</td><td>Grafana dashboard</td><td>Panels nhận metrics sau scrape</td><td>[Điền]</td></tr>
+      <tr><td>10</td><td>Ba LogQL query</td><td>Truy vấn app, Nginx, lỗi ứng dụng</td><td>[Điền]</td></tr>
+      <tr><td>11</td><td>Header/port check</td><td>Security headers có mặt, DB không publish</td><td>[Điền]</td></tr>
+    </table>
+    <pre>docker compose config
+docker compose ps
+docker compose logs --tail=100 app proxy db
+Invoke-WebRequest http://localhost:8080/api/healthz</pre>
+    <div class="evidence">CHÈN ẢNH 5: `docker compose ps` và health check thành công<br>Che mật khẩu/giá trị secret trong mọi cửa sổ terminal.</div>
+    <div class="evidence">CHÈN ẢNH 6: Danh sách 3 commit GitHub và README<br>Repository cần thuộc tài khoản theo MSSV; không chụp token.</div>
+    <div class="callout"><strong>Ghi chú kết quả:</strong> môi trường tạo mã nguồn chưa tự chạy Docker hay kiểm thử browser. Hãy ghi lại kết quả thực tế của máy demo, không sao chép câu “thành công” nếu chưa chạy.</div>
+    <div class="footer"><span>[HỌ VÀ TÊN] · [MSSV]</span><span>Trang 11</span></div>
+  </section>
+
+  <section class="page">
+    <div class="running"><span>10 · KẾT LUẬN</span><span>Hệ thống học trực tuyến</span></div>
+    <h2>10. Đánh giá và hướng phát triển</h2>
+    <h3>10.1 Kết quả đạt được</h3>
+    <p>Thiết kế cung cấp một luồng học tập demo có thể kiểm chứng từ giao diện đến dữ liệu: khóa học và bài học khởi tạo trong MySQL; đăng ký và đánh dấu hoàn thành được lưu bằng API; Nginx làm reverse proxy; các dịch vụ hạ tầng được điều phối trong Docker Compose. Prometheus/Grafana theo dõi metrics và Loki/Promtail hỗ trợ tập trung log.</p>
+    <p>Compose thể hiện phân vùng network, port quản trị localhost và một số cài đặt giảm quyền cho app/proxy. README cung cấp quy trình chạy, địa chỉ demo, truy vấn log và giới hạn cần khắc phục trước khi public. Dashboard và báo cáo HTML được quản lý cùng mã nguồn để có thể lặp lại.</p>
+    <h3>10.2 Hạn chế</h3>
+    <ul>
+      <li>Chưa có xác minh email, khôi phục mật khẩu hoặc phân quyền vai trò; cần TLS trước khi sử dụng qua Internet.</li>
+      <li>Nội dung học là danh mục và danh sách bài mẫu, chưa phát video/quiz hoặc quản lý nội dung qua giao diện giảng viên.</li>
+      <li>HTTP, monitoring đơn máy và log local chưa có TLS end-to-end, HA, backup tự động, cảnh báo hoặc retention theo chính sách.</li>
+      <li>Bản mẫu báo cáo chứa trường thông tin và khung ảnh cần người nộp thay bằng dữ liệu thật.</li>
+    </ul>
+    <h3>10.3 Hướng phát triển</h3>
+    <ol><li>Bổ sung xác minh email, khôi phục mật khẩu và RBAC học viên/giảng viên/admin.</li><li>Thêm bài giảng video, quiz, tìm kiếm nâng cao và CRUD khóa học.</li><li>Bật HTTPS, quản lý secret an toàn, backup/restore MySQL và kiểm thử khôi phục.</li><li>Thêm alerting, retention, resource limits, kiểm tra image và pipeline CI.</li><li>Đánh giá tải, accessibility, logging privacy và bảo mật trước triển khai thật.</li></ol>
+    <h3>10.4 Tài liệu bàn giao</h3>
+    <p>Mã nguồn và cách chạy: `README.md`. Cấu hình triển khai: `docker-compose.yml`, `Dockerfile`, `nginx/`. Schema dữ liệu: `database/init.sql`. Monitoring/logging: thư mục `monitoring/`. Báo cáo để điền và xuất PDF: `docs/BAO-CAO.html`.</p>
+    <div class="callout"><strong>Xác nhận của sinh viên:</strong> Tôi đã tự chạy demo, bổ sung minh chứng, thay thông tin mẫu và mô tả trung thực kết quả triển khai.<br><br>Ngày: ____ / ____ / 2026 &nbsp;&nbsp;&nbsp;&nbsp; Chữ ký: ____________________</div>
+    <div class="footer"><span>[HỌ VÀ TÊN] · [MSSV]</span><span>Trang 12</span></div>
+  </section>
+</body>
+</html>

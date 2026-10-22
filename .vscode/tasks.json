@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Học Mỗi Ngày: khởi động Docker Compose",
+      "type": "process",
+      "command": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "$ErrorActionPreference = 'Stop'; docker compose up --build -d; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; $deadline = (Get-Date).AddMinutes(3); do { try { $response = Invoke-WebRequest -Uri 'http://localhost:8088/api/healthz' -UseBasicParsing -TimeoutSec 3; if ($response.StatusCode -eq 200) { exit 0 } } catch { }; Start-Sleep -Seconds 2 } while ((Get-Date) -lt $deadline); Write-Error 'Website chưa sẵn sàng sau 3 phút. Kiểm tra Docker Desktop và docker compose logs.'; exit 1"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
