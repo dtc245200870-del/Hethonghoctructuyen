@@ -42,6 +42,10 @@ function courseProgress(course) {
   return course.lesson_count ? Math.round((course.completed_count / course.lesson_count) * 100) : 0;
 }
 
+function isCourseCompleted(course) {
+  return Boolean(course.lesson_count) && Number(course.completed_count) >= Number(course.lesson_count);
+}
+
 function renderCourses() {
   const search = searchInput.value.trim().toLocaleLowerCase("vi");
   const visibleCourses = courses.filter((course) => {
@@ -84,7 +88,10 @@ function renderCourses() {
     progressWrap.append(progressCaption, progressTrack);
     const button = element("button", course.is_enrolled ? "course-action is-enrolled" : "course-action");
     button.type = "button";
-    button.append(element("span", "", course.is_enrolled ? "Tiếp tục học" : "Xem khóa học"), element("span", "", "→"));
+    const buttonMain = element("span", "course-action-main", course.is_enrolled ? (isCourseCompleted(course) ? "Vào học" : "Tiếp tục học") : "Xem khóa học");
+    const statusBadge = element("span", "course-status-badge", "Đã học");
+    statusBadge.hidden = !isCourseCompleted(course);
+    button.append(buttonMain, statusBadge, element("span", "course-action-arrow", "→"));
     button.addEventListener("click", () => openCourse(course.id));
     body.append(details, title, instructor, meta, progressWrap, button);
     card.append(artwork, body);
@@ -164,6 +171,7 @@ async function openCourse(courseId) {
       if (course.is_enrolled) {
         const lessonButton = element("button", "lesson-open", "Vào học");
         lessonButton.type = "button";
+        lessonButton.classList.toggle("is-complete", Boolean(lesson.completed));
         lessonButton.setAttribute("aria-label", `Vào học: ${lesson.title}`);
         lessonButton.addEventListener("click", () => openLesson(lesson.id, course.title));
         row.append(lessonButton);
