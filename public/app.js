@@ -91,7 +91,7 @@ function renderCourses() {
     const buttonMain = element("span", "course-action-main", course.is_enrolled ? (isCourseCompleted(course) ? "Vào học" : "Tiếp tục học") : "Xem khóa học");
     const statusBadge = element("span", "course-status-badge", "Đã học");
     statusBadge.hidden = !isCourseCompleted(course);
-    button.append(buttonMain, statusBadge, element("span", "course-action-arrow", "→"));
+    button.append(buttonMain, element("span", "course-action-arrow", "→"), statusBadge);
     button.addEventListener("click", () => openCourse(course.id));
     body.append(details, title, instructor, meta, progressWrap, button);
     card.append(artwork, body);
